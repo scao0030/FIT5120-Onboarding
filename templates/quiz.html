@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SunSafe AU — Skin Health Quiz</title>
+<link rel="stylesheet" href="/static/shared.css" />
+<style>
+/* PROGRESS HEADER */
+.quiz-hdr { display: flex; align-items: center; gap: 16px; margin-bottom: 36px; }
+.q-step { font-family: var(--font-mono); font-size: 12px; color: var(--muted); white-space: nowrap; }
+.progress-track { height: 4px; background: var(--card2); border-radius: 4px; flex: 1; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--amber), var(--coral)); transition: width 0.5s ease; }
+
+/* QUESTION CARD */
+.q-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+  padding: 44px; max-width: 740px; margin: 0 auto 24px;
+}
+.q-num { font-family: var(--font-mono); font-size: 11px; color: var(--amber); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
+.q-text { font-family: var(--font-display); font-size: 24px; font-weight: 700; line-height: 1.4; margin-bottom: 32px; }
+.options { display: flex; flex-direction: column; gap: 12px; }
+.option {
+  background: var(--card2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px 22px; cursor: pointer; transition: all var(--ease);
+  display: flex; align-items: center; gap: 16px; font-size: 14px; line-height: 1.5;
+}
+.option:hover { border-color: rgba(91,196,245,0.4); background: rgba(91,196,245,0.04); }
+.option.sel { border-color: var(--amber); background: rgba(245,166,35,0.07); }
+.opt-ltr {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--navy3); color: var(--muted);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 13px;
+  flex-shrink: 0; transition: all var(--ease);
+}
+.option.sel .opt-ltr { background: var(--amber); color: var(--navy); }
+.q-nav { display: flex; justify-content: space-between; margin-top: 32px; }
+
+/* RESULT */
+.result-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+  padding: 52px; max-width: 740px; margin: 0 auto; text-align: center;
+}
+.result-score { font-family: var(--font-display); font-size: 72px; font-weight: 800; color: var(--amber); line-height: 1; margin: 16px 0 8px; }
+.result-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin: 28px 0; }
+.r-stat { background: var(--card2); border-radius: 12px; padding: 18px; }
+.r-val { font-family: var(--font-display); font-size: 26px; font-weight: 800; }
+.r-lbl { font-size: 11px; color: var(--muted); margin-top: 5px; }
+.tips { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+.tip { background: var(--card2); border-radius: var(--radius-sm); padding: 16px 18px; display: flex; gap: 14px; align-items: flex-start; font-size: 13px; line-height: 1.6; }
+.tip-ico { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+/* INTRO */
+.intro-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+  padding: 52px; max-width: 740px; margin: 0 auto; text-align: center;
+}
+.intro-emoji { font-size: 64px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+<div class="shell">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <a class="logo" href="/">S</a>
+    <a class="nav-btn" href="/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </a>
+    <a class="nav-btn" href="/search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Search</span>
+    </a>
+    <a class="nav-btn active" href="/quiz">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <span>Quiz</span>
+    </a>
+    <a class="nav-btn" href="/reminders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span>Alerts</span>
+    </a>
+    <div class="sidebar-spacer"></div>
+    <a class="nav-btn" href="/profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">Skin Health Quiz</div>
+      <div class="topbar-actions">
+        <div class="pill pill-sky">📍 Melbourne, VIC</div>
+        <div class="pill pill-amber">☀—UV 8 —Very High</div>
+        <a class="avatar" href="/profile">AJ</a>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="mb-24">
+        <div style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:6px;">Skin Health Quiz</div>
+        <div style="color:var(--muted);font-size:14px;">Answer 5 quick questions to unlock your personalised UV protection plan.</div>
+      </div>
+
+      <!-- INTRO STATE -->
+      <div id="state-intro">
+        <div class="intro-card">
+          <div class="intro-emoji">🧬</div>
+          <div style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:12px;">Know Your UV Risk</div>
+          <div style="color:var(--muted);font-size:15px;max-width:460px;margin:0 auto 32px;line-height:1.7;">
+            This 5-question quiz helps us identify your Fitzpatrick skin type and calculate personalised sunscreen dosage, burn time, and clothing recommendations.
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:36px;">
+            <div style="background:var(--card2);border-radius:12px;padding:16px;">
+              <div style="font-size:24px;margin-bottom:6px;">⏱️</div>
+              <div style="font-weight:600;font-size:13px;">2 minutes</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">to complete</div>
+            </div>
+            <div style="background:var(--card2);border-radius:12px;padding:16px;">
+              <div style="font-size:24px;margin-bottom:6px;">🎯</div>
+              <div style="font-weight:600;font-size:13px;">5 questions</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">science-backed</div>
+            </div>
+            <div style="background:var(--card2);border-radius:12px;padding:16px;">
+              <div style="font-size:24px;margin-bottom:6px;">🛡️</div>
+              <div style="font-weight:600;font-size:13px;">Personalised</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:2px;">protection plan</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="font-size:16px;padding:14px 40px;" onclick="startQuiz()">Start Quiz →</button>
+        </div>
+      </div>
+
+      <!-- QUESTION STATE -->
+      <div id="state-quiz" style="display:none;">
+        <div class="quiz-hdr">
+          <div class="q-step" id="step-label">Q1 of 5</div>
+          <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:20%;"></div></div>
+          <div class="q-step" id="pct-label">20%</div>
+        </div>
+
+        <div class="q-card">
+          <div class="q-num" id="q-num">Question 01 / 05</div>
+          <div class="q-text" id="q-text"></div>
+          <div class="options" id="q-options"></div>
+          <div class="q-nav">
+            <button class="btn btn-ghost" id="btn-prev" onclick="prevQ()">—Previous</button>
+            <button class="btn btn-primary" onclick="nextQ()">Next →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULT STATE -->
+      <div id="state-result" style="display:none;">
+        <div class="result-card">
+          <span class="badge badge-amber" style="margin-bottom:12px;">Quiz Complete ✓</span>
+          <div style="font-family:var(--font-display);font-size:20px;font-weight:700;margin-bottom:4px;">Your UV Risk Profile</div>
+          <div class="result-score">MEDIUM</div>
+          <div style="color:var(--muted);font-size:14px;">Fitzpatrick Skin Type II — Light skin, burns easily, tans minimally</div>
+          <div class="result-stats">
+            <div class="r-stat">
+              <div class="r-val" style="color:var(--amber);">SPF 50+</div>
+              <div class="r-lbl">Minimum Protection</div>
+            </div>
+            <div class="r-stat">
+              <div class="r-val" style="color:var(--coral);">~15 min</div>
+              <div class="r-lbl">Burn Time at UV 8</div>
+            </div>
+            <div class="r-stat">
+              <div class="r-val" style="color:var(--sky);">2 hrs</div>
+              <div class="r-lbl">Reapply Interval</div>
+            </div>
+          </div>
+          <div class="tips">
+            <div class="tip"><div class="tip-ico">🧴</div><div>Apply <strong>5.2 teaspoons</strong> of SPF 50+ sunscreen at least 20 minutes before sun exposure, covering face, neck, arms, and legs thoroughly.</div></div>
+            <div class="tip"><div class="tip-ico">👒</div><div>Wear a <strong>broad-brimmed hat</strong> (minimum 5 cm brim) and UV400-rated sunglasses whenever you're outdoors during UV High periods.</div></div>
+            <div class="tip"><div class="tip-ico">🕐</div><div>Seek shade <strong>between 10 AM —3 PM</strong> when UV is at its peak. UV radiation can be damaging even on cool, cloudy days in Australia.</div></div>
+            <div class="tip"><div class="tip-ico">👕</div><div>Choose <strong>UPF 50+ rated long-sleeve clothing</strong> for any outdoor activity lasting more than 30 minutes during high UV periods.</div></div>
+          </div>
+          <button class="btn btn-primary" style="margin-top:28px;width:100%;justify-content:center;font-size:15px;" onclick="retake()">Retake Quiz</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+const questions = [
+  {
+    text: "What is your natural skin colour before sun exposure?",
+    opts: ["Very pale or ivory —freckles are common","Fair —slight beige tone","Light to medium beige —olive undertone","Moderate brown","Dark brown","Very dark brown or black"]
+  },
+  {
+    text: "How does your skin react after 30 minutes of sun exposure without any protection?",
+    opts: ["Always burns severely, never tans","Burns easily, may tan very slightly","Burns moderately first, then gradually tans","Burns minimally, always tans well","Rarely burns, tans profusely and darkly","Never burns —skin is naturally very dark"]
+  },
+  {
+    text: "How often do you currently use sun protection (sunscreen, hat, clothing) outdoors?",
+    opts: ["Never or almost never","Only on beach or holiday trips","Sometimes, when I remember","Most of the time","Always —every time I go outside"]
+  },
+  {
+    text: "How many times per year do you deliberately try to get a tan?",
+    opts: ["Never —I actively avoid tanning","Occasionally (1–3 times per year)","Sometimes (a few times per season)","Regularly —I enjoy tanning","Very frequently —a tan is important to me"]
+  },
+  {
+    text: "Have you or anyone in your immediate family ever been diagnosed with skin cancer or melanoma?",
+    opts: ["Yes —myself","Yes —a first-degree relative (parent, sibling, child)","Yes —a more distant relative","No known history"]
+  }
+];
+
+let cur = 0;
+let answers = Array(questions.length).fill(null);
+
+function startQuiz() {
+  document.getElementById('state-intro').style.display = 'none';
+  document.getElementById('state-quiz').style.display  = 'block';
+  renderQ();
+}
+function renderQ() {
+  const q = questions[cur];
+  const pct = Math.round(((cur+1)/questions.length)*100);
+  document.getElementById('step-label').textContent = `Q${cur+1} of ${questions.length}`;
+  document.getElementById('pct-label').textContent  = `${pct}%`;
+  document.getElementById('prog-fill').style.width  = `${pct}%`;
+  document.getElementById('q-num').textContent = `Question ${String(cur+1).padStart(2,'0')} / ${String(questions.length).padStart(2,'0')}`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('btn-prev').style.visibility = cur === 0 ? 'hidden' : 'visible';
+  const letters = ['A','B','C','D','E','F'];
+  document.getElementById('q-options').innerHTML = q.opts.map((o,i)=>`
+    <div class="option${answers[cur]===i?' sel':''}" onclick="pick(${i})">
+      <div class="opt-ltr">${letters[i]}</div>
+      <div>${o}</div>
+    </div>`).join('');
+}
+function pick(i) {
+  answers[cur] = i;
+  document.querySelectorAll('.option').forEach((el,j)=>{
+    el.classList.toggle('sel', j===i);
+    el.querySelector('.opt-ltr').style.background = j===i ? 'var(--amber)' : '';
+    el.querySelector('.opt-ltr').style.color = j===i ? 'var(--navy)' : '';
+  });
+}
+function nextQ() {
+  if (cur < questions.length-1) { cur++; renderQ(); }
+  else showResult();
+}
+function prevQ() { if (cur > 0) { cur--; renderQ(); } }
+function showResult() {
+  document.getElementById('state-quiz').style.display   = 'none';
+  document.getElementById('state-result').style.display = 'block';
+}
+function retake() {
+  cur = 0; answers = Array(questions.length).fill(null);
+  document.getElementById('state-result').style.display = 'none';
+  document.getElementById('state-intro').style.display  = 'block';
+}
+</script>
+</body>
+</html>

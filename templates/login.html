@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SunSafe AU — Login</title>
+<link rel="stylesheet" href="/static/shared.css" />
+<style>
+body { overflow: hidden; }
+.login-wrap { display: flex; height: 100vh; width: 100vw; }
+
+/* LEFT PANEL */
+.login-left {
+  flex: 1;
+  background: linear-gradient(145deg, var(--navy2) 0%, var(--navy3) 100%);
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: flex-start;
+  padding: 72px;
+  position: relative; overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  pointer-events: none;
+}
+.brand { display: flex; align-items: center; gap: 14px; margin-bottom: 64px; position: relative; z-index: 1; }
+.brand-logo {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, var(--amber), var(--coral));
+  border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--navy);
+}
+.brand-name { font-family: var(--font-display); font-size: 26px; font-weight: 800; }
+.headline {
+  font-family: var(--font-display); font-size: 54px; font-weight: 800;
+  line-height: 1.1; margin-bottom: 20px; position: relative; z-index: 1;
+}
+.headline span { color: var(--amber); }
+.sub {
+  font-size: 16px; color: var(--muted); line-height: 1.7;
+  max-width: 400px; margin-bottom: 44px; position: relative; z-index: 1;
+}
+.features { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
+.feat { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--muted); }
+.feat-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+
+/* UV orb decorations */
+.uv-orb {
+  width: 90px; height: 90px;
+  border-radius: 50%; font-family: var(--font-display);
+  font-weight: 800; font-size: 24px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(4px);
+  position: absolute; z-index: 1;
+}
+
+/* RIGHT PANEL */
+.login-right {
+  width: 480px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 56px 48px;
+  background: var(--navy);
+  border-left: 1px solid var(--border);
+}
+.form-card { width: 100%; max-width: 360px; }
+.form-title { font-family: var(--font-display); font-size: 30px; font-weight: 800; margin-bottom: 6px; }
+.form-sub { font-size: 14px; color: var(--muted); margin-bottom: 36px; }
+.form-field { margin-bottom: 20px; }
+.form-label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; }
+.form-input {
+  width: 100%; background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 13px 16px;
+  color: var(--white); font-family: var(--font-body); font-size: 14px;
+  outline: none; transition: border-color var(--ease);
+}
+.form-input:focus { border-color: rgba(245,166,35,0.5); }
+.form-input::placeholder { color: var(--muted); }
+.submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--amber), var(--amber2));
+  color: var(--navy); border: none; border-radius: var(--radius-sm);
+  padding: 15px; font-family: var(--font-display); font-weight: 700; font-size: 16px;
+  cursor: pointer; margin-top: 8px; margin-bottom: 24px;
+  transition: all var(--ease);
+}
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(245,166,35,0.45); }
+.divider { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font-size: 12px; color: var(--muted); }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.switch-link { text-align: center; font-size: 13px; color: var(--muted); }
+.switch-link a { color: var(--amber); cursor: pointer; text-decoration: none; }
+.switch-link a:hover { text-decoration: underline; }
+.tab-row { display: flex; gap: 0; margin-bottom: 28px; background: var(--card); border-radius: var(--radius-sm); padding: 4px; }
+.tab {
+  flex: 1; padding: 9px; text-align: center; cursor: pointer;
+  border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--muted);
+  transition: all var(--ease); border: none; background: transparent;
+}
+.tab.active { background: var(--navy2); color: var(--white); }
+</style>
+</head>
+<body>
+<div class="login-wrap">
+
+  <!-- LEFT -->
+  <div class="login-left">
+    <!-- Orb decorations -->
+    <div class="orb" style="width:500px;height:500px;background:radial-gradient(circle,rgba(245,166,35,0.1) 0%,transparent 70%);top:-150px;left:-150px;"></div>
+    <div class="orb" style="width:400px;height:400px;background:radial-gradient(circle,rgba(91,196,245,0.07) 0%,transparent 70%);bottom:-120px;right:-60px;"></div>
+
+    <!-- Floating UV value orbs -->
+    <div class="uv-orb" style="color:var(--coral);background:rgba(255,107,107,0.1);top:18%;right:12%;">11</div>
+    <div class="uv-orb" style="color:var(--amber);background:rgba(245,166,35,0.1);top:44%;right:24%;width:70px;height:70px;font-size:20px;">8</div>
+    <div class="uv-orb" style="color:var(--mint);background:rgba(62,207,142,0.1);bottom:22%;right:16%;width:64px;height:64px;font-size:18px;">3</div>
+
+    <div class="brand">
+      <div class="brand-logo">S</div>
+      <div class="brand-name">SunSafe AU</div>
+    </div>
+
+    <h1 class="headline">
+      Stay safe<br/>under the<br/><span>Australian sun.</span>
+    </h1>
+    <p class="sub">
+      Real-time UV tracking, personalised skin advice, and smart daily reminders —built for Australians who take their health seriously.
+    </p>
+    <div class="features">
+      <div class="feat"><div class="feat-dot"></div>Live UV index with human-language burn alerts</div>
+      <div class="feat"><div class="feat-dot"></div>Personalised advice by Fitzpatrick skin type</div>
+      <div class="feat"><div class="feat-dot"></div>Sun-safe tourism &amp; local business discovery</div>
+      <div class="feat"><div class="feat-dot"></div>Daily UV high/low push notifications</div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="login-right">
+    <div class="form-card">
+
+      <!-- Tab toggle -->
+      <div class="tab-row">
+        <button class="tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+        <button class="tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
+      </div>
+
+      <!-- Sign In form -->
+      <div id="form-signin">
+        <div class="form-title">Welcome back</div>
+        <div class="form-sub">Sign in to your SunSafe account</div>
+        <div class="form-field">
+          <label class="form-label">Email address</label>
+          <input class="form-input" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="•••••••" />
+        </div>
+        <button class="submit-btn" onclick="window.location='/'">Sign In →</button>
+        <div class="divider">or</div>
+        <div class="switch-link">Don't have an account? <a onclick="switchTab('register')">Create one free</a></div>
+      </div>
+
+      <!-- Register form -->
+      <div id="form-register" style="display:none;">
+        <div class="form-title">Create account</div>
+        <div class="form-sub">Join SunSafe AU for free</div>
+        <div class="form-field">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" type="text" placeholder="Alex Johnson" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Email address</label>
+          <input class="form-input" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Password</label>
+          <input class="form-input" type="password" placeholder="Create a strong password" />
+        </div>
+        <button class="submit-btn" onclick="window.location='/'">Create Account →</button>
+        <div class="divider">or</div>
+        <div class="switch-link">Already have an account? <a onclick="switchTab('signin')">Sign in</a></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<script>
+function switchTab(t) {
+  document.getElementById('form-signin').style.display   = t==='signin'   ? 'block' : 'none';
+  document.getElementById('form-register').style.display = t==='register' ? 'block' : 'none';
+  document.getElementById('tab-signin').classList.toggle('active', t==='signin');
+  document.getElementById('tab-register').classList.toggle('active', t==='register');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SunSafe AU — Daily Reminders</title>
+<link rel="stylesheet" href="/static/shared.css" />
+<style>
+/* HERO CARD */
+.rem-hero {
+  background: linear-gradient(135deg, var(--card) 0%, var(--card2) 100%);
+  border: 1px solid var(--border); border-radius: 20px;
+  padding: 32px; margin-bottom: 24px;
+  position: relative; overflow: hidden;
+}
+.rem-hero::before {
+  content: ''; position: absolute; bottom: -70px; right: -50px;
+  width: 240px; height: 240px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 70%);
+}
+.time-big {
+  font-family: var(--font-display); font-size: 68px; font-weight: 800;
+  color: var(--white); line-height: 1; margin-bottom: 4px;
+}
+.date-lbl { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+
+/* TIMELINE */
+.timeline { display: flex; gap: 4px; align-items: flex-end; height: 70px; }
+.tl-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.tl-bar { width: 100%; border-radius: 3px 3px 0 0; min-height: 3px; }
+.tl-hr  { font-size: 8px; color: var(--muted); font-family: var(--font-mono); }
+.tl-now { border: 2px solid var(--amber); border-radius: 3px 3px 0 0; }
+
+/* REMINDER LIST */
+.rem-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 20px 22px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 18px;
+}
+.time-badge {
+  border-radius: 12px; padding: 11px 16px; text-align: center; flex-shrink: 0;
+  background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.2);
+}
+.t-time   { font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--amber); }
+.t-period { font-size: 10px; color: var(--muted); font-family: var(--font-mono); margin-top: 1px; }
+.rem-info { flex: 1; }
+.rem-title { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+.rem-sub   { font-size: 12px; color: var(--muted); }
+.add-btn {
+  width: 100%; background: var(--card2); border: 2px dashed rgba(255,255,255,0.1);
+  border-radius: var(--radius); padding: 20px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  color: var(--muted); font-size: 14px; cursor: pointer;
+  transition: all var(--ease); margin-bottom: 28px;
+}
+.add-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+/* NOTIFICATION CARDS */
+.notif {
+  background: var(--navy3); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 20px; margin-bottom: 10px;
+  display: flex; gap: 14px; align-items: flex-start;
+}
+.notif-ico { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.notif-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.notif-body { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.notif-time { font-size: 10px; color: var(--muted); margin-top: 5px; font-family: var(--font-mono); }
+</style>
+</head>
+<body>
+<div class="shell">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <a class="logo" href="/">S</a>
+    <a class="nav-btn" href="/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </a>
+    <a class="nav-btn" href="/search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <span>Search</span>
+    </a>
+    <a class="nav-btn" href="/quiz">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      <span>Quiz</span>
+    </a>
+    <a class="nav-btn active" href="/reminders">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span>Alerts</span>
+    </a>
+    <div class="sidebar-spacer"></div>
+    <a class="nav-btn" href="/profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profile</span>
+    </a>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title">Daily Reminders</div>
+      <div class="topbar-actions">
+        <div class="pill pill-sky">📍 Melbourne, VIC</div>
+        <div class="pill pill-amber">☀—UV 8 —Very High</div>
+        <a class="avatar" href="/profile">AJ</a>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="mb-24">
+        <div style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:6px;">Daily Reminders</div>
+        <div style="color:var(--muted);font-size:14px;">Never miss a UV warning or sunscreen reapplication window.</div>
+      </div>
+
+      <!-- HERO -->
+      <div class="rem-hero">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;">
+          <div>
+            <div class="time-big">10:42</div>
+            <div class="date-lbl">Tuesday, 8 July 2025 · Melbourne, VIC</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <span class="badge badge-coral">—UV peaks 12:30 PM at 11 (Extreme)</span>
+              <span class="badge badge-amber">🔔 Next alert in 78 min</span>
+            </div>
+          </div>
+          <div style="text-align:right;position:relative;z-index:1;">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;">Today's UV Range</div>
+            <div style="font-family:var(--font-display);font-size:36px;font-weight:800;line-height:1;">UV 2 —11</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px;">Low at 6 AM · Extreme at 12— PM</div>
+          </div>
+        </div>
+
+        <div style="margin-top:22px;">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Hourly UV Index Today</div>
+          <div class="timeline">
+            <div class="tl-col"><div class="tl-bar" style="height:8px; background:var(--uv-low);"></div><div class="tl-hr">6</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:14px;background:var(--uv-low);"></div><div class="tl-hr">7</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:22px;background:var(--uv-moderate);"></div><div class="tl-hr">8</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:32px;background:var(--uv-moderate);"></div><div class="tl-hr">9</div></div>
+            <div class="tl-col"><div class="tl-bar tl-now" style="height:42px;background:var(--uv-high);"></div><div class="tl-hr" style="color:var(--amber);">10★</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:52px;background:var(--uv-high);"></div><div class="tl-hr">11</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:62px;background:var(--uv-vhigh);box-shadow:0 0 8px rgba(255,107,107,0.5);"></div><div class="tl-hr">12</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:70px;background:var(--uv-extreme);box-shadow:0 0 10px rgba(167,139,250,0.5);"></div><div class="tl-hr">13</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:58px;background:var(--uv-vhigh);"></div><div class="tl-hr">14</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:44px;background:var(--uv-high);"></div><div class="tl-hr">15</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:28px;background:var(--uv-moderate);"></div><div class="tl-hr">16</div></div>
+            <div class="tl-col"><div class="tl-bar" style="height:14px;background:var(--uv-low);"></div><div class="tl-hr">17</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TWO COLUMNS -->
+      <div class="grid-2" style="align-items:start;">
+        <!-- LEFT: Reminders -->
+        <div>
+          <span class="section-label">Active Reminders</span>
+
+          <div class="rem-card">
+            <div class="time-badge">
+              <div class="t-time">7:30</div><div class="t-period">AM</div>
+            </div>
+            <div class="rem-info">
+              <div class="rem-title">Morning UV Briefing</div>
+              <div class="rem-sub">Daily high/low forecast + peak time</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+
+          <div class="rem-card">
+            <div class="time-badge">
+              <div class="t-time">10:00</div><div class="t-period">AM</div>
+            </div>
+            <div class="rem-info">
+              <div class="rem-title">Apply Sunscreen Now</div>
+              <div class="rem-sub">Before UV climbs to High —SPF 50+</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+
+          <div class="rem-card">
+            <div class="time-badge" style="background:rgba(255,107,107,0.1);border-color:rgba(255,107,107,0.2);">
+              <div class="t-time" style="color:var(--coral);">12:00</div><div class="t-period">PM</div>
+            </div>
+            <div class="rem-info">
+              <div class="rem-title">⚠️ Seek Shade Alert</div>
+              <div class="rem-sub">UV peak window —stay out of direct sun</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+
+          <div class="rem-card">
+            <div class="time-badge" style="background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.2);">
+              <div class="t-time" style="color:var(--lavender);">2:00</div><div class="t-period">PM</div>
+            </div>
+            <div class="rem-info">
+              <div class="rem-title">Reapply Sunscreen</div>
+              <div class="rem-sub">2-hour reapplication reminder</div>
+            </div>
+            <div class="toggle off"></div>
+          </div>
+
+          <div class="rem-card" style="opacity:0.6;">
+            <div class="time-badge" style="background:rgba(91,196,245,0.1);border-color:rgba(91,196,245,0.2);">
+              <div class="t-time" style="color:var(--sky);">5:30</div><div class="t-period">PM</div>
+            </div>
+            <div class="rem-info">
+              <div class="rem-title">Evening Wind-Down</div>
+              <div class="rem-sub">UV safe —outdoor activity summary</div>
+            </div>
+            <div class="toggle off"></div>
+          </div>
+
+          <div class="add-btn">
+            <span style="font-size:20px;">+</span> Add Custom Reminder
+          </div>
+        </div>
+
+        <!-- RIGHT: Notification previews + settings -->
+        <div>
+          <span class="section-label">Notification Preview</span>
+
+          <div class="notif">
+            <div class="notif-ico">☀️</div>
+            <div>
+              <div class="notif-title">SunSafe —Morning Briefing</div>
+              <div class="notif-body">Today's UV peaks at 11 (Extreme) at 12:30 PM. Apply SPF 50+ before 10 AM. Safe outdoor window closes at 10:15 AM for Skin Type II.</div>
+              <div class="notif-time">7:30 AM · Delivered</div>
+            </div>
+          </div>
+
+          <div class="notif">
+            <div class="notif-ico">🧴</div>
+            <div>
+              <div class="notif-title">SunSafe —Apply Sunscreen Now</div>
+              <div class="notif-body">UV rising to High (7). Apply 5.2 tsp of SPF 50+ now before going outside. At UV 8, your skin burns in ~15 min without protection.</div>
+              <div class="notif-time">10:00 AM · Upcoming in 78 min</div>
+            </div>
+          </div>
+
+          <div class="notif" style="opacity:0.45;">
+            <div class="notif-ico">🌡️</div>
+            <div>
+              <div class="notif-title">SunSafe —Seek Shade Immediately</div>
+              <div class="notif-body">UV is now Extreme (11). Do not expose unprotected skin. Stay indoors or in full shade until after 3 PM.</div>
+              <div class="notif-time">12:00 PM · Scheduled</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:20px;">
+            <span class="section-label">Notification Preferences</span>
+            <div class="s-row">
+              <div class="s-icon" style="background:rgba(245,166,35,0.15);">🔔</div>
+              <div class="s-label">Push Notifications</div>
+              <div class="toggle"></div>
+            </div>
+            <div class="s-row">
+              <div class="s-icon" style="background:rgba(91,196,245,0.15);">📧</div>
+              <div class="s-label">Email Daily Digest</div>
+              <div class="toggle off"></div>
+            </div>
+            <div class="s-row">
+              <div class="s-icon" style="background:rgba(62,207,142,0.15);">📅</div>
+              <div class="s-label">Weekdays Only</div>
+              <div class="toggle off"></div>
+            </div>
+            <div class="s-row" style="margin-bottom:0;">
+              <div class="s-icon" style="background:rgba(167,139,250,0.15);">🌙</div>
+              <div class="s-label">Quiet Hours (10pm—am)</div>
+              <div class="toggle"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
