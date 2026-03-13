@@ -170,6 +170,7 @@
               Burn time at UV 8: ~15 min without protection. SPF 50+ always recommended.
             </div>
           </div>
+          
 
           <!-- Location -->
           <div class="card mb-20">
@@ -279,6 +280,13 @@ function setSkin(el) {
   document.querySelectorAll('.skin-chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
 }
+// Toggle buttons
+document.querySelectorAll('.toggle').forEach(toggle => {
+  toggle.addEventListener('click', () => {
+    toggle.classList.toggle('off');
+  });
+});
 </script>
+
 </body>
 </html>

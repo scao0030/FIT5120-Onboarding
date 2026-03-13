@@ -66,6 +66,7 @@
 .notif-time { font-size: 10px; color: var(--muted); margin-top: 5px; font-family: var(--font-mono); }
 </style>
 </head>
+
 <body>
 <div class="shell">
   <!-- SIDEBAR -->
@@ -273,5 +274,29 @@
     </div>
   </div>
 </div>
+<script>
+function updateClock() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const mins = String(now.getMinutes()).padStart(2, '0');
+  document.querySelector('.time-big').textContent = `${hours}:${mins}`;
+  
+  const options = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+  document.querySelector('.date-lbl').textContent = 
+    now.toLocaleDateString('en-AU', options) + ' · Melbourne, VIC';
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// Toggle buttons
+document.querySelectorAll('.toggle').forEach(toggle => {
+  toggle.addEventListener('click', () => {
+    toggle.classList.toggle('off');
+  });
+});
+</script>
+
+</script>
+
 </body>
 </html>

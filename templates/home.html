@@ -116,8 +116,8 @@
 
       <!-- PAGE HEADER -->
       <div class="mb-24">
-        <span class="section-label">Tuesday, 8 July 2025</span>
-        <div style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:4px;">Good morning, Alex 👋</div>
+        <span class="section-label" id="today-date"></span>
+        <div style="font-family:var(--font-display);font-size:28px;font-weight:800;margin-bottom:4px;" id="greeting">👋</div>
         <div style="color:var(--muted);font-size:14px;">Here's your UV safety briefing for today.</div>
       </div>
 
@@ -264,6 +264,14 @@ fetch('/api/uv')
     document.querySelector('.uv-number').textContent = data.uv_index;
     console.log('Real UV data:', data);
   });
+const now = new Date();
+const options = { weekday:'long', day:'numeric', month:'long', year:'numeric' };
+document.getElementById('today-date').textContent = now.toLocaleDateString('en-AU', options).toUpperCase();
+
+const hour = now.getHours();
+const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+document.getElementById('greeting').innerHTML = `${greeting}, Alex 👋`;
+
 </script>
 </body>
 </html>
