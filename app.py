@@ -4,13 +4,6 @@ import os
 
 app = Flask(__name__)
 
-# ──────────────────────────────────────────────
-# OpenWeatherMap API key
-# Sign up free at: https://openweathermap.org/api
-# Replace with your own key or set as env variable
-# ──────────────────────────────────────────────
-OWM_API_KEY = os.environ.get("OWM_API_KEY", "YOUR_API_KEY_HERE")
-
 # Fitzpatrick skin type data
 SKIN_TYPES = {
     "I":   {"label": "Type I – Very Fair",   "color": "#FFE4C4", "min_burn_uv": 2,  "desc": "Always burns, never tans. Highest risk."},
@@ -36,7 +29,6 @@ def get_uv_category(uv_index):
     return UV_LEVELS[-1]
 
 def minutes_to_burn(uv_index, skin_type_key):
-    """Estimate minutes to unprotected skin damage."""
     skin = SKIN_TYPES.get(skin_type_key, SKIN_TYPES["III"])
     if uv_index == 0:
         return None
@@ -48,7 +40,23 @@ def spf_recommendation(uv_index):
     if uv_index <= 2:  return {"spf": "SPF 15+", "reapply": "Every 2 hours if sweating", "teaspoons": 1}
     if uv_index <= 5:  return {"spf": "SPF 30+", "reapply": "Every 2 hours", "teaspoons": 1.5}
     if uv_index <= 7:  return {"spf": "SPF 50+", "reapply": "Every 90 minutes", "teaspoons": 2}
-    return             {"spf": "SPF 50+",         "reapply": "Every 60 minutes", "teaspoons": 2.5}
+    return                    {"spf": "SPF 50+", "reapply": "Every 60 minutes", "teaspoons": 2.5}
+
+def generate_tips(uv, skin_key, risk):
+    tips = [
+        f"Apply {spf_recommendation(uv)['spf']} sunscreen 20 minutes before going outside.",
+        f"Reapply {spf_recommendation(uv)['reapply']}.",
+    ]
+    if risk == "HIGH":
+        tips.append("Seek shade especially between 10am and 2pm.")
+        tips.append("Wear UPF 50+ protective clothing and a broad-brimmed hat.")
+        tips.append("UV-blocking sunglasses are essential right now.")
+    if skin_key in ("I", "II"):
+        tips.append("Your skin type is very sensitive — even short exposure requires full protection.")
+    if uv >= 8:
+        tips.append("Consider rescheduling outdoor activities to early morning or late afternoon.")
+    return tips
+
 
 # ──────────────────────────────────────────────
 # Routes
@@ -60,24 +68,25 @@ def index():
 
 @app.route("/api/uv")
 def api_uv():
-    """Fetch real-time UV index from OpenWeatherMap One Call API."""
-    lat = request.args.get("lat", "-37.8136")   # Default: Melbourne
+    lat = request.args.get("lat", "-37.8136")
     lon = request.args.get("lon", "144.9631")
     city = request.args.get("city", "Melbourne")
 
     try:
+        # Open-Meteo: 完全免费，无需API key，真实UV数据
         url = (
-            f"https://api.openweathermap.org/data/3.0/onecall"
-            f"?lat={lat}&lon={lon}&exclude=minutely,hourly,daily,alerts"
-            f"&appid={OWM_API_KEY}"
+            f"https://api.open-meteo.com/v1/forecast"
+            f"?latitude={lat}&longitude={lon}"
+            f"&current=temperature_2m,uv_index,weather_code"
+            f"&timezone=Australia/Melbourne"
         )
         resp = requests.get(url, timeout=5)
         data = resp.json()
-        uv = data.get("current", {}).get("uvi", 0)
-        temp = round(data.get("current", {}).get("temp", 293) - 273.15, 1)
-        weather_desc = data["current"]["weather"][0]["description"].capitalize() if "weather" in data.get("current", {}) else "Clear"
+        current = data["current"]
+        uv = current.get("uv_index", 0)
+        temp = round(current.get("temperature_2m", 20), 1)
+        weather_desc = "Clear" if current.get("weather_code", 0) < 3 else "Cloudy"
     except Exception:
-        # Fallback demo data if no API key
         uv = 8.5
         temp = 26.3
         weather_desc = "Sunny (demo mode)"
@@ -96,7 +105,6 @@ def api_uv():
 
 @app.route("/api/personalise")
 def api_personalise():
-    """Return personalised advice based on UV + skin type."""
     uv = float(request.args.get("uv", 5))
     skin_key = request.args.get("skin", "III").upper()
 
@@ -115,25 +123,6 @@ def api_personalise():
         "spf": spf,
         "tips": generate_tips(uv, skin_key, risk),
     })
-
-def generate_tips(uv, skin_key, risk):
-    tips = [
-        f"Apply {spf_recommendation(uv)['spf']} sunscreen 20 minutes before going outside.",
-        f"Reapply {spf_recommendation(uv)['reapply']}.",
-    ]
-    if risk == "HIGH":
-        tips.append("Seek shade especially between 10am and 2pm.")
-        tips.append("Wear UPF 50+ protective clothing and a broad-brimmed hat.")
-        tips.append("UV-blocking sunglasses are essential right now.")
-    if skin_key in ("I", "II"):
-        tips.append("Your skin type is very sensitive — even short exposure requires full protection.")
-    if uv >= 8:
-        tips.append("Consider rescheduling outdoor activities to early morning or late afternoon.")
-    return tips
-
-@app.route("/education")
-def education():
-    return render_template("education.html")
 
 @app.route("/search")
 def search():
@@ -157,4 +146,3 @@ def login():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
-

@@ -257,5 +257,13 @@
     </div>
   </div>
 </div>
+<script>
+fetch('/api/uv')
+  .then(res => res.json())
+  .then(data => {
+    document.querySelector('.uv-number').textContent = data.uv_index;
+    console.log('Real UV data:', data);
+  });
+</script>
 </body>
 </html>
