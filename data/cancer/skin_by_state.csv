@@ -1,0 +1,33 @@
+"State_or_Territory","Cancer_group_site","Sex","Count","ASR_2001_AusPop_per_100k"
+"New South Wales","Melanoma of the skin","Males",NA,66.4
+"Victoria","Melanoma of the skin","Males",NA,46.3
+"Queensland","Melanoma of the skin","Males",NA,93.1
+"Western Australia","Melanoma of the skin","Males",949,66.2
+"South Australia","Melanoma of the skin","Males",546,50
+"Tasmania","Melanoma of the skin","Males",224,65.8
+"Australian Capital Territory","Melanoma of the skin","Males",120,62.8
+"Northern Territory","Melanoma of the skin","Males",55,59.6
+"New South Wales","Melanoma of the skin","Females",NA,43.3
+"Victoria","Melanoma of the skin","Females",NA,31.5
+"Queensland","Melanoma of the skin","Females",NA,63.8
+"Western Australia","Melanoma of the skin","Females",680,44.8
+"South Australia","Melanoma of the skin","Females",358,30.2
+"Tasmania","Melanoma of the skin","Females",188,55
+"Australian Capital Territory","Melanoma of the skin","Females",86,39.5
+"Northern Territory","Melanoma of the skin","Females",33,33.2
+"New South Wales","Non-melanoma skin cancer (rare types)","Males",343,7.4
+"Victoria","Non-melanoma skin cancer (rare types)","Males",154,4.3
+"Queensland","Non-melanoma skin cancer (rare types)","Males",210,7.6
+"Western Australia","Non-melanoma skin cancer (rare types)","Males",86,6.1
+"South Australia","Non-melanoma skin cancer (rare types)","Males",32,2.7
+"Tasmania","Non-melanoma skin cancer (rare types)","Males",15,3.8
+"Australian Capital Territory","Non-melanoma skin cancer (rare types)","Males",6,3
+"Northern Territory","Non-melanoma skin cancer (rare types)","Males",2,NA
+"New South Wales","Non-melanoma skin cancer (rare types)","Females",157,2.8
+"Victoria","Non-melanoma skin cancer (rare types)","Females",86,2
+"Queensland","Non-melanoma skin cancer (rare types)","Females",111,3.4
+"Western Australia","Non-melanoma skin cancer (rare types)","Females",43,2.4
+"South Australia","Non-melanoma skin cancer (rare types)","Females",13,0.9
+"Tasmania","Non-melanoma skin cancer (rare types)","Females",7,1.7
+"Australian Capital Territory","Non-melanoma skin cancer (rare types)","Females",2,NA
+"Northern Territory","Non-melanoma skin cancer (rare types)","Females",1,NA

@@ -1,0 +1,39 @@
+"Cancer_group_site","Age_group_years","Count","Age_specific_rate_per_100k"
+"Melanoma of the skin","00–04",1,0.1
+"Melanoma of the skin","05–09",2,0.1
+"Melanoma of the skin","10–14",5,0.3
+"Melanoma of the skin","15–19",36,2.4
+"Melanoma of the skin","20–24",120,6.9
+"Melanoma of the skin","25–29",202,10.7
+"Melanoma of the skin","30–34",379,20.1
+"Melanoma of the skin","35–39",491,27.5
+"Melanoma of the skin","40–44",638,39.9
+"Melanoma of the skin","45–49",940,55.8
+"Melanoma of the skin","50–54",NA,73.8
+"Melanoma of the skin","55–59",NA,93
+"Melanoma of the skin","60–64",NA,125.6
+"Melanoma of the skin","65–69",NA,161.1
+"Melanoma of the skin","70–74",NA,205.8
+"Melanoma of the skin","75–79",NA,240.6
+"Melanoma of the skin","80–84",NA,254.3
+"Melanoma of the skin","85–89",822,263.7
+"Melanoma of the skin","90+",459,234.9
+"Non-melanoma skin cancer (rare types)","00–04",1,0.1
+"Non-melanoma skin cancer (rare types)","05–09",0,0
+"Non-melanoma skin cancer (rare types)","10–14",2,0.1
+"Non-melanoma skin cancer (rare types)","15–19",2,0.1
+"Non-melanoma skin cancer (rare types)","20–24",4,0.2
+"Non-melanoma skin cancer (rare types)","25–29",8,0.4
+"Non-melanoma skin cancer (rare types)","30–34",4,0.2
+"Non-melanoma skin cancer (rare types)","35–39",2,0.1
+"Non-melanoma skin cancer (rare types)","40–44",8,0.5
+"Non-melanoma skin cancer (rare types)","45–49",27,1.6
+"Non-melanoma skin cancer (rare types)","50–54",31,2
+"Non-melanoma skin cancer (rare types)","55–59",40,2.6
+"Non-melanoma skin cancer (rare types)","60–64",94,6.7
+"Non-melanoma skin cancer (rare types)","65–69",134,10.9
+"Non-melanoma skin cancer (rare types)","70–74",176,16.6
+"Non-melanoma skin cancer (rare types)","75–79",208,28.5
+"Non-melanoma skin cancer (rare types)","80–84",223,44.3
+"Non-melanoma skin cancer (rare types)","85–89",180,57.7
+"Non-melanoma skin cancer (rare types)","90+",125,64
