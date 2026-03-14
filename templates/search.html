@@ -17,6 +17,19 @@
 }
 .search-input:focus { border-color: rgba(245,166,35,0.45); }
 .search-input::placeholder { color: var(--muted); }
+.suggestions {
+  position: absolute; top: 48px; left: 0; right: 0;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); overflow: hidden; z-index: 5;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  display: none;
+}
+.suggestion-item {
+  padding: 10px 14px; font-size: 13px; cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+.suggestion-item:last-child { border-bottom: none; }
+.suggestion-item:hover { background: rgba(255,255,255,0.04); }
 
 /* CHIPS */
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
@@ -107,88 +120,18 @@
       <div class="search-row">
         <div class="search-wrap">
           <svg class="search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input class="search-input" type="text" placeholder="Search suburb, city or postcode" />
+          <input id="searchInput" class="search-input" type="text" placeholder="Search suburb, city or postcode" />
+          <div id="suggestions" class="suggestions"></div>
         </div>
-        <button class="btn btn-primary">Search</button>
-        <button class="btn btn-ghost">📍 Use My Location</button>
+        <button id="searchBtn" class="btn btn-primary">Search</button>
+        <button id="locBtn" class="btn btn-ghost">📍 Use My Location</button>
       </div>
 
       <span class="section-label">Recent Searches</span>
-      <div class="chip-row">
-        <div class="chip">📍 Melbourne CBD</div>
-        <div class="chip">📍 Bondi Beach, NSW</div>
-        <div class="chip">📍 Gold Coast, QLD</div>
-        <div class="chip">📍 Adelaide, SA</div>
-        <div class="chip">📍 Cairns, QLD</div>
-        <div class="chip">📍 Perth, WA</div>
-      </div>
+      <div class="chip-row" id="recentChips"></div>
 
-      <span class="section-label">Results —Victoria</span>
-
-      <!-- Result 1 -->
-      <div class="result-card">
-        <div class="uv-swatch" style="background:rgba(255,107,107,0.12);border-color:rgba(255,107,107,0.35);color:var(--coral);">
-          <div class="n">9</div><div class="l">V.High</div>
-        </div>
-        <div class="result-info">
-          <div class="result-name">Melbourne CBD</div>
-          <div class="result-meta">37.8136° S, 144.9631° E · Updated 1 min ago · Clear skies</div>
-          <div class="result-badges">
-            <span class="badge badge-coral">🔥 Burns in ~12 min</span>
-            <span class="badge badge-amber">🧴 SPF 50+ required</span>
-            <span class="badge badge-sky">👒 Hat essential</span>
-          </div>
-        </div>
-        <button class="btn btn-ghost" style="flex-shrink:0;">View →</button>
-      </div>
-
-      <!-- Result 2 -->
-      <div class="result-card">
-        <div class="uv-swatch" style="background:rgba(245,166,35,0.12);border-color:rgba(245,166,35,0.35);color:var(--amber);">
-          <div class="n">7</div><div class="l">High</div>
-        </div>
-        <div class="result-info">
-          <div class="result-name">St Kilda Beach</div>
-          <div class="result-meta">37.8676° S, 144.9757° E · Updated 3 min ago · Partly cloudy</div>
-          <div class="result-badges">
-            <span class="badge badge-amber">Burns in ~20 min</span>
-            <span class="badge badge-amber">SPF 50+ recommended</span>
-          </div>
-        </div>
-        <button class="btn btn-ghost" style="flex-shrink:0;">View →</button>
-      </div>
-
-      <!-- Result 3 -->
-      <div class="result-card">
-        <div class="uv-swatch" style="background:rgba(245,200,66,0.12);border-color:rgba(245,200,66,0.35);color:var(--uv-moderate);">
-          <div class="n">5</div><div class="l">Moderate</div>
-        </div>
-        <div class="result-info">
-          <div class="result-name">Dandenong Ranges</div>
-          <div class="result-meta">37.9167° S, 145.3500° E · Updated 5 min ago · Light cloud cover</div>
-          <div class="result-badges">
-            <span class="badge badge-mint">Burns in ~35 min</span>
-            <span class="badge badge-mint">SPF 30+ sufficient</span>
-          </div>
-        </div>
-        <button class="btn btn-ghost" style="flex-shrink:0;">View →</button>
-      </div>
-
-      <!-- Result 4 -->
-      <div class="result-card">
-        <div class="uv-swatch" style="background:rgba(62,207,142,0.12);border-color:rgba(62,207,142,0.35);color:var(--mint);">
-          <div class="n">2</div><div class="l">Low</div>
-        </div>
-        <div class="result-info">
-          <div class="result-name">Mount Buller Alpine Village</div>
-          <div class="result-meta">37.1483° S, 146.4406° E · Updated 8 min ago · Overcast</div>
-          <div class="result-badges">
-            <span class="badge badge-mint">Minimal burn risk</span>
-            <span class="badge badge-sky">Basic protection advised</span>
-          </div>
-        </div>
-        <button class="btn btn-ghost" style="flex-shrink:0;">View →</button>
-      </div>
+      <span class="section-label" id="resultsLabel">Results</span>
+      <div id="results"></div>
 
       <!-- SUN-SAFE VENUES -->
       <div style="margin-top:32px;">
@@ -236,5 +179,176 @@
     </div>
   </div>
 </div>
+<script>
+const input = document.getElementById('searchInput');
+const btn = document.getElementById('searchBtn');
+const resultsEl = document.getElementById('results');
+const resultsLabel = document.getElementById('resultsLabel');
+const suggestionsEl = document.getElementById('suggestions');
+const locBtn = document.getElementById('locBtn');
+const recentChips = document.getElementById('recentChips');
+
+function uvStyle(uv) {
+  if (uv <= 2) return { bg: 'rgba(62,207,142,0.12)', border: 'rgba(62,207,142,0.35)', color: 'var(--mint)', label: 'Low' };
+  if (uv <= 5) return { bg: 'rgba(245,200,66,0.12)', border: 'rgba(245,200,66,0.35)', color: 'var(--uv-moderate)', label: 'Moderate' };
+  if (uv <= 7) return { bg: 'rgba(245,166,35,0.12)', border: 'rgba(245,166,35,0.35)', color: 'var(--amber)', label: 'High' };
+  if (uv <= 10) return { bg: 'rgba(255,107,107,0.12)', border: 'rgba(255,107,107,0.35)', color: 'var(--coral)', label: 'V.High' };
+  return { bg: 'rgba(156,39,176,0.12)', border: 'rgba(156,39,176,0.35)', color: '#c76dff', label: 'Extreme' };
+}
+
+function renderResults(items) {
+  resultsEl.innerHTML = '';
+  if (!items.length) {
+    resultsLabel.textContent = 'Results';
+    resultsEl.innerHTML = '<div class="muted" style="color:var(--muted);font-size:13px;">No matches found.</div>';
+    return;
+  }
+  const state = items[0].state || '';
+  resultsLabel.textContent = state ? `Results — ${state}` : 'Results';
+  items.forEach(item => {
+    const uv = item.uv_index || 0;
+    const style = uvStyle(uv);
+    const burn = item.burn_minutes ? `Burns in ~${item.burn_minutes} min` : 'Low burn risk';
+    const spf = item.spf?.spf || 'SPF';
+    const weather = item.weather || '—';
+    const temp = (item.temp_c !== undefined) ? `${item.temp_c}°C` : '—';
+    const el = document.createElement('div');
+    el.className = 'result-card';
+    el.innerHTML = `
+      <div class="uv-swatch" style="background:${style.bg};border-color:${style.border};color:${style.color};">
+        <div class="n">${uv.toFixed(1)}</div><div class="l">${style.label}</div>
+      </div>
+      <div class="result-info">
+        <div class="result-name">${item.name}</div>
+        <div class="result-meta">${item.lat.toFixed(4)}° S, ${item.lon.toFixed(4)}° E · ${temp} · ${weather}</div>
+        <div class="result-badges">
+          <span class="badge badge-amber">🧴 ${spf}</span>
+          <span class="badge badge-coral">🔥 ${burn}</span>
+        </div>
+      </div>
+      <button class="btn btn-ghost" style="flex-shrink:0;">View →</button>
+    `;
+    resultsEl.appendChild(el);
+  });
+}
+
+async function runSearch() {
+  const query = input.value.trim();
+  if (!query) return;
+  suggestionsEl.style.display = 'none';
+  resultsLabel.textContent = 'Searching...';
+  resultsEl.innerHTML = '';
+  const res = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
+  const data = await res.json();
+  renderResults(data.results || []);
+  saveRecent(query);
+  renderRecent();
+}
+
+btn.addEventListener('click', runSearch);
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') runSearch();
+});
+
+let suggestTimer = null;
+input.addEventListener('input', () => {
+  const q = input.value.trim();
+  if (suggestTimer) clearTimeout(suggestTimer);
+  if (!q) {
+    suggestionsEl.style.display = 'none';
+    return;
+  }
+  suggestTimer = setTimeout(async () => {
+    const res = await fetch(`/api/suggest?query=${encodeURIComponent(q)}`);
+    const data = await res.json();
+    const items = data.suggestions || [];
+    if (!items.length) {
+      suggestionsEl.style.display = 'none';
+      return;
+    }
+    suggestionsEl.innerHTML = items.map(s => `<div class="suggestion-item">${s}</div>`).join('');
+    suggestionsEl.style.display = 'block';
+    suggestionsEl.querySelectorAll('.suggestion-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const text = item.textContent;
+        if (/^[0-9]{3,4}\s—/.test(text)) {
+          input.value = text.split('—')[0].trim();
+        } else {
+          input.value = text.split(',')[0].trim();
+        }
+        suggestionsEl.style.display = 'none';
+        runSearch();
+      });
+    });
+  }, 200);
+});
+
+document.addEventListener('click', (e) => {
+  if (!suggestionsEl.contains(e.target) && e.target !== input) {
+    suggestionsEl.style.display = 'none';
+  }
+});
+
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    input.value = chip.textContent.replace('📍', '').trim();
+    runSearch();
+  });
+});
+
+function loadRecent() {
+  try {
+    return JSON.parse(sessionStorage.getItem('recent_searches') || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveRecent(query) {
+  const recent = loadRecent().filter(q => q.toLowerCase() !== query.toLowerCase());
+  recent.unshift(query);
+  sessionStorage.setItem('recent_searches', JSON.stringify(recent.slice(0, 6)));
+}
+
+function renderRecent() {
+  const recent = loadRecent();
+  recentChips.innerHTML = '';
+  if (!recent.length) {
+    recentChips.innerHTML = '<div class="muted" style="color:var(--muted);font-size:13px;">No recent searches yet.</div>';
+    return;
+  }
+  recent.forEach(q => {
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.textContent = `📍 ${q}`;
+    chip.addEventListener('click', () => {
+      input.value = q;
+      runSearch();
+    });
+    recentChips.appendChild(chip);
+  });
+}
+
+renderRecent();
+
+locBtn.addEventListener('click', () => {
+  if (!navigator.geolocation) {
+    resultsLabel.textContent = 'Results';
+    resultsEl.innerHTML = '<div class="muted" style="color:var(--muted);font-size:13px;">Geolocation is not supported.</div>';
+    return;
+  }
+  resultsLabel.textContent = 'Locating...';
+  resultsEl.innerHTML = '';
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const { latitude, longitude } = pos.coords;
+    const res = await fetch(`/api/uv_by_coords?lat=${latitude}&lon=${longitude}&name=Your%20Location`);
+    const data = await res.json();
+    renderResults([data]);
+  }, () => {
+    resultsLabel.textContent = 'Results';
+    resultsEl.innerHTML = '<div class="muted" style="color:var(--muted);font-size:13px;">Location permission denied.</div>';
+  }, { enableHighAccuracy: true, timeout: 8000 });
+});
+</script>
 </body>
 </html>

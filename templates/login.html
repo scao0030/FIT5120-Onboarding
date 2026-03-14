@@ -95,6 +95,9 @@ body { overflow: hidden; }
   transition: all var(--ease); border: none; background: transparent;
 }
 .tab.active { background: var(--navy2); color: var(--white); }
+.error-msg { color: var(--coral); font-size: 13px; margin-bottom: 16px; }
+.info-msg { color: var(--mint); font-size: 13px; margin-bottom: 16px; }
+.ok-msg { color: var(--mint); font-size: 13px; margin-bottom: 16px; }
 </style>
 </head>
 <body>
@@ -136,44 +139,74 @@ body { overflow: hidden; }
 
       <!-- Tab toggle -->
       <div class="tab-row">
-        <button class="tab active" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
-        <button class="tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
+        <button class="tab {% if tab != 'register' %}active{% endif %}" id="tab-signin" onclick="switchTab('signin')">Sign In</button>
+        <button class="tab {% if tab == 'register' %}active{% endif %}" id="tab-register" onclick="switchTab('register')">Create Account</button>
       </div>
 
       <!-- Sign In form -->
-      <div id="form-signin">
+      <div id="form-signin" {% if tab == 'register' %}style="display:none;"{% endif %}>
         <div class="form-title">Welcome back</div>
         <div class="form-sub">Sign in to your SunSafe account</div>
-        <div class="form-field">
-          <label class="form-label">Email address</label>
-          <input class="form-input" type="email" placeholder="you@example.com" />
-        </div>
-        <div class="form-field">
-          <label class="form-label">Password</label>
-          <input class="form-input" type="password" placeholder="•••••••" />
-        </div>
-        <button class="submit-btn" onclick="window.location='/'">Sign In →</button>
+        {% if error and tab != 'register' %}
+          <div class="error-msg">{{ error }}</div>
+        {% endif %}
+        {% if message and tab != 'register' %}
+          <div class="info-msg">{{ message }}</div>
+        {% endif %}
+        <form method="post" action="/login">
+          <div class="form-field">
+            <label class="form-label">Username</label>
+            <input class="form-input" type="text" name="username" placeholder="yourname123" required />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" name="password" placeholder="•••••••" required />
+          </div>
+          <button class="submit-btn" type="submit">Sign In →</button>
+        </form>
         <div class="divider">or</div>
         <div class="switch-link">Don't have an account? <a onclick="switchTab('register')">Create one free</a></div>
       </div>
 
       <!-- Register form -->
-      <div id="form-register" style="display:none;">
+      <div id="form-register" {% if tab == 'register' %}style="display:block;"{% else %}style="display:none;"{% endif %}>
         <div class="form-title">Create account</div>
         <div class="form-sub">Join SunSafe AU for free</div>
-        <div class="form-field">
-          <label class="form-label">Full Name</label>
-          <input class="form-input" type="text" placeholder="Alex Johnson" />
-        </div>
-        <div class="form-field">
-          <label class="form-label">Email address</label>
-          <input class="form-input" type="email" placeholder="you@example.com" />
-        </div>
-        <div class="form-field">
-          <label class="form-label">Password</label>
-          <input class="form-input" type="password" placeholder="Create a strong password" />
-        </div>
-        <button class="submit-btn" onclick="window.location='/'">Create Account →</button>
+        {% if error and tab == 'register' %}
+          <div class="error-msg">{{ error }}</div>
+        {% endif %}
+        {% if message and tab == 'register' %}
+          <div class="info-msg">{{ message }}</div>
+        {% endif %}
+        <form method="post" action="/register">
+          <div class="form-field">
+            <label class="form-label">Full Name</label>
+            <input class="form-input" type="text" name="full_name" placeholder="Alex Johnson" required />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Gender</label>
+            <select class="form-input" name="gender" required>
+              <option value="" disabled selected>Select</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="other">Other</option>
+              <option value="unspecified">Prefer not to say</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Username</label>
+            <input class="form-input" type="text" name="username" placeholder="yourname123" required />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Email address</label>
+            <input class="form-input" type="email" name="email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Password</label>
+            <input class="form-input" type="password" name="password" placeholder="Create a strong password" required />
+          </div>
+          <button class="submit-btn" type="submit">Create Account →</button>
+        </form>
         <div class="divider">or</div>
         <div class="switch-link">Already have an account? <a onclick="switchTab('signin')">Sign in</a></div>
       </div>
