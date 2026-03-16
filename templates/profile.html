@@ -108,7 +108,7 @@
             <span class="badge badge-amber">🏅 7-Day Streak</span>
             <span class="badge badge-mint">—Quiz Complete</span>
             <span class="badge badge-sky">📍 Melbourne, VIC</span>
-            <span class="badge badge-lav">🛡🛡️ Skin Type II</span>
+            <span class="badge badge-lav" id="skinBadge">🛡🛡️ Skin Type II</span>
           </div>
         </div>
         <button class="btn btn-ghost" style="position:relative;z-index:1;">Edit Profile</button>
@@ -140,34 +140,34 @@
             <span class="section-label">Fitzpatrick Skin Type</span>
             <div style="font-size:13px;color:var(--muted);">Select your skin type for personalised UV recommendations</div>
             <div class="skin-grid">
-              <div class="skin-chip" onclick="setSkin(this)">
+              <div class="skin-chip" data-type="I" onclick="setSkin(this)">
                 <div class="swatch" style="background:#FDDBB4;"></div>
                 <div class="skin-lbl">Type I</div>
               </div>
-              <div class="skin-chip sel" onclick="setSkin(this)">
+              <div class="skin-chip sel" data-type="II" onclick="setSkin(this)">
                 <div class="swatch" style="background:#F4C68D;"></div>
                 <div class="skin-lbl">Type II</div>
               </div>
-              <div class="skin-chip" onclick="setSkin(this)">
+              <div class="skin-chip" data-type="III" onclick="setSkin(this)">
                 <div class="swatch" style="background:#D9A06A;"></div>
                 <div class="skin-lbl">Type III</div>
               </div>
-              <div class="skin-chip" onclick="setSkin(this)">
+              <div class="skin-chip" data-type="IV" onclick="setSkin(this)">
                 <div class="swatch" style="background:#A0724A;"></div>
                 <div class="skin-lbl">Type IV</div>
               </div>
-              <div class="skin-chip" onclick="setSkin(this)">
+              <div class="skin-chip" data-type="V" onclick="setSkin(this)">
                 <div class="swatch" style="background:#6B4226;"></div>
                 <div class="skin-lbl">Type V</div>
               </div>
-              <div class="skin-chip" onclick="setSkin(this)">
+              <div class="skin-chip" data-type="VI" onclick="setSkin(this)">
                 <div class="swatch" style="background:#3B1F0E;"></div>
                 <div class="skin-lbl">Type VI</div>
               </div>
             </div>
             <div class="skin-hint">
-              <strong>Type II selected</strong> —Light skin. Burns easily, tans minimally.<br/>
-              Burn time at UV 8: ~15 min without protection. SPF 50+ always recommended.
+              <strong id="skinTitle">Type II selected</strong> —<span id="skinDesc">Light skin. Burns easily, tans minimally.</span><br/>
+              <span id="skinAdvice">Burn time at UV 8: ~15 min without protection. SPF 50+ always recommended.</span>
             </div>
           </div>
           
@@ -245,11 +245,11 @@
             <span class="section-label">Your Sunscreen Dosage</span>
             <div style="display:flex;align-items:center;gap:20px;margin-bottom:14px;">
               <div style="text-align:center;">
-                <div style="font-family:var(--font-display);font-size:44px;font-weight:800;color:var(--amber);line-height:1;">5.2</div>
+                <div id="doseValue" style="font-family:var(--font-display);font-size:44px;font-weight:800;color:var(--amber);line-height:1;">5.2</div>
                 <div style="font-size:11px;color:var(--muted);">teaspoons</div>
               </div>
               <div style="flex:1;font-size:13px;color:var(--muted);line-height:1.6;">
-                Based on your body surface area and Fitzpatrick Type II skin. Covers full face, neck, arms, and legs for one application.
+                <span id="doseText">Based on your body surface area and Fitzpatrick Type II skin. Covers full face, neck, arms, and legs for one application.</span>
               </div>
             </div>
             <div style="background:var(--card2);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--muted);">
@@ -276,10 +276,31 @@
   </div>
 </div>
 <script>
+const skinData = {
+  I:  { label: 'Type I',  desc: 'Very fair skin. Always burns, never tans.', advice: 'Burn time at UV 8: ~10 min without protection. SPF 50+ always recommended.', dose: '5.6' },
+  II: { label: 'Type II', desc: 'Light skin. Burns easily, tans minimally.', advice: 'Burn time at UV 8: ~15 min without protection. SPF 50+ always recommended.', dose: '5.2' },
+  III:{ label: 'Type III',desc: 'Medium skin. Sometimes burns, gradually tans.', advice: 'Burn time at UV 8: ~20 min without protection. SPF 50+ recommended.', dose: '4.8' },
+  IV: { label: 'Type IV', desc: 'Olive skin. Rarely burns, tans well.', advice: 'Burn time at UV 8: ~30 min without protection. SPF 30–50 recommended.', dose: '4.3' },
+  V:  { label: 'Type V',  desc: 'Brown skin. Very rarely burns, tans easily.', advice: 'Burn time at UV 8: ~45 min without protection. SPF 30+ recommended.', dose: '3.8' },
+  VI: { label: 'Type VI', desc: 'Dark brown skin. Never burns, still needs protection.', advice: 'Burn time at UV 8: ~60 min without protection. SPF 30+ recommended.', dose: '3.3' },
+};
+
 function setSkin(el) {
   document.querySelectorAll('.skin-chip').forEach(c => c.classList.remove('sel'));
   el.classList.add('sel');
+  const key = el.getAttribute('data-type') || 'II';
+  const data = skinData[key] || skinData.II;
+  document.getElementById('skinTitle').textContent = `${data.label} selected`;
+  document.getElementById('skinDesc').textContent = data.desc;
+  document.getElementById('skinAdvice').textContent = data.advice;
+  document.getElementById('skinBadge').textContent = `🛡🛡️ Skin ${data.label}`;
+  document.getElementById('doseValue').textContent = data.dose;
+  document.getElementById('doseText').textContent = `Based on your body surface area and Fitzpatrick ${data.label} skin. Covers full face, neck, arms, and legs for one application.`;
 }
+// Initialize selected skin
+const selected = document.querySelector('.skin-chip.sel') || document.querySelector('.skin-chip');
+if (selected) setSkin(selected);
+
 // Toggle buttons
 document.querySelectorAll('.toggle').forEach(toggle => {
   toggle.addEventListener('click', () => {
